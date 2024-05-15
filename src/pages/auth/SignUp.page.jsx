@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -11,13 +11,15 @@ import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { ErrorMessage, Form, Formik } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useSignUpMutation } from "../../store/endpoint/auth.endpoint";
+import { useToast } from "@/components/ui/use-toast";
 
 const SignUpPage = () => {
+  const nav = useNavigate();
+  const { toast } = useToast();
   const [fun, data] = useSignUpMutation();
-  console.log(data);
   const initialValue = {
     name: "",
     email: "",
@@ -27,6 +29,16 @@ const SignUpPage = () => {
   const handleSubmit = async (v) => {
     await fun(v);
   };
+  useEffect(() => {
+    if (data.error) {
+      toast({
+        title: "Auth Error from server",
+        description: data.error.data.message,
+      });
+    } else if (data.data) {
+      nav("/");
+    }
+  }, [data]);
   const validationSchema = Yup.object({
     name: Yup.string()
       .required("Name is required")
