@@ -28,6 +28,7 @@ const SignInPage = () => {
   };
   useEffect(() => {
     if (data?.data?.success) {
+      console.log(data);
       nav("/home");
     }
   }, [data]);
